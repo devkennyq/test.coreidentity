@@ -3,12 +3,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace test.coreidentity.core.Migrations
 {
-    public partial class InitialSetup : Migration
+    public partial class DBCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "Identity");
+
+            migrationBuilder.CreateTable(
+                name: "DNS_Users",
+                columns: table => new
+                {
+                    UserID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
+                    FirstName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    Email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__DNS_User__1788CCAC7F972DE0", x => x.UserID);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Role",
@@ -31,6 +47,7 @@ namespace test.coreidentity.core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExternalKey = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -49,6 +66,74 @@ namespace test.coreidentity.core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DNS_UserDocuments",
+                columns: table => new
+                {
+                    DocumentID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
+                    Abstract = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: false),
+                    UserID_Creator = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UserID_Revisor = table.Column<int>(type: "int", nullable: false),
+                    RevisionDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Version = table.Column<int>(type: "int", nullable: false),
+                    StatusID = table.Column<int>(type: "int", nullable: false),
+                    FilePath = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false),
+                    FileSize = table.Column<int>(type: "int", nullable: false),
+                    MIMETypeID = table.Column<int>(type: "int", nullable: false),
+                    UserID_Checkout = table.Column<int>(type: "int", nullable: true),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DNS_UserDocuments_DocumentID", x => x.DocumentID);
+                    table.ForeignKey(
+                        name: "FK_DNS_UserDocuments_DNS_Users_Checkout",
+                        column: x => x.UserID_Checkout,
+                        principalTable: "DNS_Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DNS_UserDocuments_DNS_Users_Creator",
+                        column: x => x.UserID_Creator,
+                        principalTable: "DNS_Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DNS_UserDocuments_DNS_Users_Revisor",
+                        column: x => x.UserID_Revisor,
+                        principalTable: "DNS_Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DNS_Vendor",
+                columns: table => new
+                {
+                    VendorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VendorUserId = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    Pwd = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    LastAccessedDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    VendorToken = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    VendorExpiration = table.Column<int>(type: "int", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    ContactUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DNS_Vendor", x => x.VendorId);
+                    table.ForeignKey(
+                        name: "FK_DNS_Vendor_DNS_Users",
+                        column: x => x.ContactUserId,
+                        principalTable: "DNS_Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -169,6 +254,32 @@ namespace test.coreidentity.core.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_DNS_UserDocuments_UserID_Checkout",
+                table: "DNS_UserDocuments",
+                column: "UserID_Checkout");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNS_UserDocuments_UserID_Creator",
+                table: "DNS_UserDocuments",
+                column: "UserID_Creator");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNS_UserDocuments_UserID_Revisor",
+                table: "DNS_UserDocuments",
+                column: "UserID_Revisor");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNS_Vendor",
+                table: "DNS_Vendor",
+                column: "VendorUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DNS_Vendor_ContactUserId",
+                table: "DNS_Vendor",
+                column: "ContactUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "Identity",
                 table: "Role",
@@ -218,6 +329,12 @@ namespace test.coreidentity.core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DNS_UserDocuments");
+
+            migrationBuilder.DropTable(
+                name: "DNS_Vendor");
+
+            migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "Identity");
 
@@ -236,6 +353,9 @@ namespace test.coreidentity.core.Migrations
             migrationBuilder.DropTable(
                 name: "UserTokens",
                 schema: "Identity");
+
+            migrationBuilder.DropTable(
+                name: "DNS_Users");
 
             migrationBuilder.DropTable(
                 name: "Role",

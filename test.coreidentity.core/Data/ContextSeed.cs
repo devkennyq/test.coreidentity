@@ -12,16 +12,16 @@ namespace test.coreidentity.core.Data
     {
         public const string ROLE_NAME = "regular";
 
-        public static async Task SeedDefaultRole(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedDefaultRole(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             //Seed
             await roleManager.CreateAsync(new IdentityRole(ROLE_NAME));
         }
 
-        public static async Task SeedDefaultUser(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedDefaultUser(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             //Seed Default User
-            var defaultUser = new IdentityUser
+            var defaultUser = new ApplicationUser
             {
                 UserName = "admin",
                 Email = "admin@fake.email.com",

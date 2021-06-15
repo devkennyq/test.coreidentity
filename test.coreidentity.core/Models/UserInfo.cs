@@ -8,5 +8,7 @@ namespace test.coreidentity.core.Models
     {
         public string UserName { get; set; }
         public string Email { get; set; }
+
+        public Guid ExternalKey { get; set; }
     }
 }

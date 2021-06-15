@@ -57,6 +57,7 @@ namespace test.coreidentity.webapi
 
             #region Repositories
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IFKeysRepository, FKeysRepository>();
             #endregion
 
             #region Controllers

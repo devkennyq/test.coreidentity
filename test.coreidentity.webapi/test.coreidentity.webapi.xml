@@ -4,6 +4,28 @@
         <name>test.coreidentity.webapi</name>
     </assembly>
     <members>
+        <member name="T:test.coreidentity.webapi.Controllers.FKeysController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:test.coreidentity.webapi.Controllers.FKeysController.fKeysRepository">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:test.coreidentity.webapi.Controllers.FKeysController.#ctor(test.coreidentity.core.Interfaces.IFKeysRepository)">
+            <summary>
+            
+            </summary>
+            <param name="fKeysRepository"></param>
+        </member>
+        <member name="M:test.coreidentity.webapi.Controllers.FKeysController.AddRecordsToTablesN">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:test.coreidentity.webapi.Controllers.UserController">
             <summary>
             
